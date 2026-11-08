@@ -1,0 +1,10 @@
+/target
+**/*.rs.bk
+*.pdb
+*.exe
+*.ilk
+/dist
+assets/_frames_*
+.vscode/
+.idea/
+Thumbs.db

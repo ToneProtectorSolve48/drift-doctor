@@ -1,0 +1,5 @@
+* text=auto
+docs/** linguist-documentation
+*.html linguist-documentation
+*.png binary
+*.gif binary

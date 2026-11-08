@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Drift Doctor - design mockup</title>
+<meta name="viewport" content="width=1440">
+<style>
+:root{
+  --sidebar:#1B1C1F; --bg:#222327; --panel:#2A2B2F; --panel-2:#323338; --line:#3A3B41; --line-soft:#303136;
+  --text:#E8E9EC; --text-2:#A6A9B0; --text-3:#72757D;
+  --accent:#3CCB7F; --accent-ink:#082014; --warn:#E3A33A; --danger:#E5534B;
+  --plot:#18191C;
+  --paper:#FFFFFF; --paper-grid:#F6DEDE; --paper-major:#EDBDBD; --paper-ink:#1D2127;
+  --sans:'SF Pro Text','SF Pro',-apple-system,'Segoe UI Variable Text',system-ui,sans-serif;
+  --display:'SF Pro Display','SF Pro',-apple-system,'Segoe UI Variable Display',system-ui,sans-serif;
+  --mono:'SF Mono',ui-monospace,'Cascadia Mono',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1440px;height:900px;overflow:hidden}
+body{background:#2E3138 linear-gradient(180deg,#363A42 0%,#2A2D33 100%); font:400 13px var(--sans); color:var(--text); font-variant-numeric:tabular-nums; position:relative}
+.win{position:absolute; left:80px; top:50px; width:1280px; height:800px; border-radius:8px; overflow:hidden; background:var(--bg);
+  border:1px solid rgba(255,255,255,.08); box-shadow:0 24px 70px rgba(0,0,0,.45), 0 4px 16px rgba(0,0,0,.25)}
+.titlebar{height:32px; display:flex; align-items:center; background:var(--sidebar); user-select:none}
+.titlebar .app{flex:1; display:flex; align-items:center; gap:8px; padding-left:12px; font:400 12px var(--sans); color:var(--text-2)}
+.titlebar .ctl{display:flex}
+.titlebar .ctl span{width:46px; height:32px; display:flex; align-items:center; justify-content:center}
+.side{position:absolute; left:0; top:32px; bottom:0; width:232px; background:var(--sidebar); border-right:1px solid #141517; display:flex; flex-direction:column}
+.devsel{margin:6px 10px 10px; height:52px; border-radius:6px; display:flex; align-items:center; gap:10px; padding:0 10px; background:#232428}
+.devsel div{min-width:0}
+.devsel b{display:block; font:600 13px var(--sans); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.devsel small{display:block; font:400 12px var(--sans); color:var(--text-2); margin-top:1px}
+.devsel .chev{margin-left:auto; color:var(--text-3)}
+.navi{height:36px; margin:1px 10px; padding:0 10px; display:flex; align-items:center; gap:12px; border-radius:5px; color:var(--text-2); font:500 13px var(--sans); cursor:pointer; position:relative}
+.navi svg{flex:none}
+.navi:hover{background:#25262A}
+.navi.on{background:#2C2D32; color:var(--text)}
+.navi.on:before{content:""; position:absolute; left:0; top:10px; bottom:10px; width:3px; border-radius:2px; background:var(--accent)}
+.navi .badge{margin-left:auto; font:600 11px var(--sans); color:var(--warn)}
+.grp{margin:18px 20px 6px; font:600 11px var(--sans); color:var(--text-3)}
+.pad{height:34px; margin:1px 10px; padding:0 10px; display:flex; align-items:center; gap:10px; border-radius:5px; font:400 13px var(--sans); color:var(--text-2)}
+.pad span:first-of-type{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pad i{width:8px; height:8px; border-radius:4px; background:var(--accent); flex:none}
+.pad span:last-child{margin-left:auto; font:400 12px var(--sans); color:var(--text-3)}
+.side .foot{margin-top:auto; padding-bottom:8px}
+.main{position:absolute; left:232px; top:32px; right:0; bottom:0}
+.toolbar{height:52px; display:flex; align-items:center; gap:8px; padding:0 16px; border-bottom:1px solid #1C1D20}
+.toolbar .title{font:600 15px var(--display); margin-right:auto}
+.btn{height:32px; padding:0 14px; border-radius:5px; display:inline-flex; align-items:center; gap:8px; font:500 13px var(--sans); color:var(--text); background:var(--panel-2); border:1px solid #3E3F45; white-space:nowrap}
+.btn.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600}
+.btn.ghost{background:transparent; border-color:transparent; color:var(--text-2)}
+.select{height:32px; padding:0 10px 0 12px; border-radius:5px; display:inline-flex; align-items:center; gap:10px; background:var(--panel); border:1px solid #3A3B41; font:400 13px var(--sans); color:var(--text)}
+.seg{display:inline-flex; height:30px; background:var(--panel); border:1px solid #3A3B41; border-radius:5px; padding:2px}
+.seg span{padding:0 12px; display:flex; align-items:center; border-radius:4px; font:500 12.5px var(--sans); color:var(--text-2)}
+.seg span.on{background:#3A3C42; color:var(--text)}
+.content{position:absolute; left:16px; top:68px; width:1016px; height:658px}
+.status{position:absolute; left:0; right:0; bottom:0; height:26px; display:flex; align-items:center; gap:18px; padding:0 14px; border-top:1px solid #1C1D20; background:#1F2023; font:400 12px var(--sans); color:var(--text-2)}
+.status i{display:inline-block; width:7px; height:7px; border-radius:4px; background:var(--accent); margin-right:6px}
+.status .r{margin-left:auto}
+.scene{display:none; position:absolute; inset:0}
+.abs{position:absolute}
+canvas{display:block; position:absolute}
+.panel{position:absolute; background:var(--panel); border:1px solid var(--line-soft); border-radius:8px; overflow:hidden}
+.ph{height:40px; display:flex; align-items:center; padding:0 14px; gap:10px; font:600 13px var(--sans)}
+.ph .v{margin-left:auto; font:400 12px var(--mono); color:var(--text-2)}
+.sec{height:36px; display:flex; align-items:flex-end; padding:0 14px 7px; font:600 12px var(--sans); color:var(--text-2)}
+.rw{height:32px; display:flex; align-items:center; padding:0 14px; font:400 13px var(--sans); color:var(--text-2); border-top:1px solid var(--line-soft)}
+.rw .v{margin-left:auto; color:var(--text); font:400 13px var(--sans)}
+.rw .m{font-family:var(--mono); font-size:12.5px}
+.dot{display:inline-block; width:8px; height:8px; border-radius:4px; margin-right:7px; vertical-align:0}
+.bar{display:inline-block; width:90px; height:4px; border-radius:2px; background:#3A3B41; margin-right:10px; vertical-align:middle; overflow:hidden}
+.bar b{display:block; height:4px; background:var(--accent)}
+.info{position:absolute; left:0; top:0; width:1016px; height:44px; border-radius:6px; background:#26313A; border:1px solid #2F3E4A; display:flex; align-items:center; gap:10px; padding:0 14px; font:400 13px var(--sans); overflow:hidden}
+.info .prog{position:absolute; left:0; bottom:0; height:3px; background:var(--accent)}
+table.t{border-collapse:collapse; width:100%}
+table.t th{height:34px; text-align:left; padding:0 14px; font:500 12px var(--sans); color:var(--text-3); border-bottom:1px solid var(--line)}
+table.t td{height:38px; padding:0 14px; font:400 13px var(--sans); color:var(--text); border-bottom:1px solid var(--line-soft)}
+table.t td.m{font-family:var(--mono); font-size:12.5px}
+.setting{position:absolute; left:0; width:600px; height:64px; background:var(--panel); border:1px solid var(--line-soft); border-radius:6px; display:flex; align-items:center; padding:0 16px; gap:14px}
+.setting .tx b{display:block; font:500 13.5px var(--sans)}
+.setting .tx small{display:block; font:400 12px var(--sans); color:var(--text-2); margin-top:3px}
+.setting .ctl{margin-left:auto; display:flex; align-items:center; gap:12px; font:400 12.5px var(--mono); color:var(--text-2)}
+.tog{width:40px; height:20px; border-radius:10px; border:1px solid #8A8D94; position:relative}
+.tog i{position:absolute; top:3px; left:4px; width:12px; height:12px; border-radius:6px; background:#C9CBD0}
+.tog.on{background:var(--accent); border-color:var(--accent)}
+.tog.on i{left:23px; background:var(--accent-ink)}
+.slider{width:170px; height:4px; border-radius:2px; background:#45464C; position:relative}
+.slider b{position:absolute; left:0; top:0; height:4px; border-radius:2px; background:var(--accent)}
+.slider i{position:absolute; top:-6px; width:16px; height:16px; border-radius:8px; background:#E8E9EC; border:4px solid var(--accent); margin-left:-8px}
+.chk{display:inline-block; width:16px; height:16px; border-radius:4px; background:var(--accent); position:relative; flex:none}
+.chk:after{content:""; position:absolute; left:5px; top:2px; width:4px; height:8px; border:solid var(--accent-ink); border-width:0 2px 2px 0; transform:rotate(45deg)}
+.chk.off{background:transparent; border:1px solid #8A8D94}
+.chk.off:after{display:none}
+.paperwrap{position:absolute; left:0; top:0; width:640px; height:658px; background:#1D1E21; border-radius:8px; border:1px solid var(--line-soft)}
+.paper{position:absolute; left:50px; top:20px; width:540px; height:618px; background-color:var(--paper); color:var(--paper-ink);
+  background-image:linear-gradient(var(--paper-major) .5px, transparent .5px), linear-gradient(90deg, var(--paper-major) .5px, transparent .5px),
+    linear-gradient(var(--paper-grid) .5px, transparent .5px), linear-gradient(90deg, var(--paper-grid) .5px, transparent .5px);
+  background-size:40px 40px,40px 40px,8px 8px,8px 8px; box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.paper .lab{font:600 9px var(--sans); letter-spacing:.06em; color:#7A5C5C; text-transform:uppercase}
+.paper .val{font:500 12px var(--sans); margin-top:2px}
+.cursor{position:absolute; width:22px; height:22px; z-index:50; pointer-events:none; display:none}
+</style>
+</head>
+<body>
+<div class="win">
+  <div class="titlebar">
+    <div class="app"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.4" fill="none" stroke="#3CCB7F" stroke-width="1.4"/><circle cx="10.2" cy="6.2" r="2" fill="#3CCB7F"/></svg>Drift Doctor</div>
+    <div class="ctl">
+      <span><svg width="10" height="10"><path d="M0 5.5h10" stroke="#A6A9B0"/></svg></span>
+      <span><svg width="10" height="10"><rect x=".5" y=".5" width="9" height="9" rx="1" fill="none" stroke="#A6A9B0"/></svg></span>
+      <span><svg width="10" height="10"><path d="M0 0L10 10M10 0L0 10" stroke="#A6A9B0"/></svg></span>
+    </div>
+  </div>
+  <div class="side">
+    <div class="devsel">
+      <svg width="28" height="28" viewBox="0 0 28 28"><rect width="28" height="28" rx="6" fill="#2C2D32"/><g fill="none" stroke="#E8E9EC" stroke-width="1.5" stroke-linejoin="round"><path d="M9.2 9.5h9.6c2.1 0 3.6 1.6 3.9 3.7l.8 5.3c.2 1.5-1.4 2.6-2.7 1.8l-2.6-1.8h-8.4l-2.6 1.8c-1.3.8-2.9-.3-2.7-1.8l.8-5.3c.3-2.1 1.8-3.7 3.9-3.7z"/><path d="M10 12.5v3M8.5 14h3"/></g><circle cx="17.6" cy="13" r="1" fill="#E8E9EC"/><circle cx="19.4" cy="14.8" r="1" fill="#E8E9EC"/></svg>
+      <div><b>Xbox Wireless Controller</b><small>P1 · USB · Connected</small></div>
+      <svg class="chev" width="12" height="12"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+    </div>
+    <div id="nav"></div>
+    <div class="grp">Controllers</div>
+    <div class="pad"><i></i><span>Xbox Wireless Controller</span><span>P1</span></div>
+    <div class="pad"><i></i><span>DualSense (Steam Input)</span><span>P2</span></div>
+    <div class="pad"><i style="background:#55585F"></i><span style="color:var(--text-3)">8BitDo Pro 2</span><span>off</span></div>
+    <div class="foot"><div class="navi" id="navSettings"></div></div>
+  </div>
+  <div class="main">
+    <div class="toolbar" id="toolbar"></div>
+    <div class="content">
+
+      <!-- MONITOR -->
+      <section class="scene" id="monitor">
+        <div class="panel" style="left:0;top:0;width:346px;height:384px"><div class="ph">Left stick<span class="v" id="mLv">x +3.3  y +2.5</span></div><canvas id="pL" style="left:8px;top:44px;width:330px;height:330px"></canvas></div>
+        <div class="panel" style="left:358px;top:0;width:346px;height:384px"><div class="ph">Right stick<span class="v" id="mRv">x -0.4  y +0.2</span></div><canvas id="pR" style="left:8px;top:44px;width:330px;height:330px"></canvas></div>
+        <div class="panel" style="left:0;top:396px;width:704px;height:262px">
+          <div class="ph">Live input<span class="v" style="font-family:var(--sans)"><span style="color:var(--accent)">━</span> X &nbsp; <span style="color:#7E8189">━</span> Y &nbsp; · last 5 s</span></div>
+          <canvas id="lanes" style="left:0;top:40px;width:702px;height:220px"></canvas>
+        </div>
+        <div class="panel" style="left:716px;top:0;width:300px;height:658px">
+          <div class="sec">Left stick</div>
+          <div class="rw">Drift score<span class="v"><span class="dot" style="background:var(--warn)"></span>72 · Mild drift</span></div>
+          <div class="rw">Center offset<span class="v m">4.1% at 37°</span></div>
+          <div class="rw">Rest noise (r99)<span class="v m">1.4%</span></div>
+          <div class="rw">Suggested deadzone<span class="v m">7.0%</span></div>
+          <div class="sec">Right stick</div>
+          <div class="rw">Drift score<span class="v"><span class="dot" style="background:var(--accent)"></span>96 · Healthy</span></div>
+          <div class="rw">Center offset<span class="v m">0.6% at 211°</span></div>
+          <div class="rw">Rest noise (r99)<span class="v m">0.9%</span></div>
+          <div class="rw">Suggested deadzone<span class="v m">2.5%</span></div>
+          <div class="sec">Triggers</div>
+          <div class="rw">LT<span class="v m"><span class="bar"><b id="bLT"></b></span><span id="vLT" style="display:inline-block;width:28px;text-align:right">0</span></span></div>
+          <div class="rw">RT<span class="v m"><span class="bar"><b id="bRT"></b></span><span id="vRT" style="display:inline-block;width:28px;text-align:right">0</span></span></div>
+          <div class="sec">Connection</div>
+          <div class="rw">Report rate<span class="v m" id="vHz">250 Hz</span></div>
+          <div class="rw">Report interval<span class="v m" id="vDt">4.00 ms</span></div>
+          <div class="rw">Buttons<span class="v m" id="vBtn">none</span></div>
+          <div class="rw">Battery<span class="v">Wired</span></div>
+          <div class="rw">Vibration<span class="v"><span class="btn" style="height:24px;padding:0 10px;font-size:12px">Test</span></span></div>
+        </div>
+      </section>
+
+      <!-- REST TEST -->
+      <section class="scene" id="rest">
+        <div class="info" id="rInfo"><svg id="rIco" width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="#7DB7E8" stroke-width="1.5"/><path d="M10 9v5M10 6.2v.1" stroke="#7DB7E8" stroke-width="1.8" stroke-linecap="round"/></svg><span id="rInfoTxt">Put the controller on a flat surface and don't touch the sticks.</span><span class="abs" style="right:14px;font:400 12.5px var(--mono);color:var(--text-2)" id="rInfoR"></span><div class="prog" id="rProg" style="width:0"></div></div>
+        <div class="panel" style="left:0;top:56px;width:502px;height:370px"><div class="ph">Left stick<span class="v">scale ±8%</span></div><canvas id="rL" style="left:8px;top:40px;width:322px;height:322px"></canvas><div class="abs" id="lgL" style="left:344px;top:56px;width:146px"></div></div>
+        <div class="panel" style="left:514px;top:56px;width:502px;height:370px"><div class="ph">Right stick<span class="v">scale ±8%</span></div><canvas id="rR" style="left:8px;top:40px;width:322px;height:322px"></canvas><div class="abs" id="lgR" style="left:344px;top:56px;width:146px"></div></div>
+        <div class="panel" style="left:0;top:438px;width:1016px;height:220px">
+          <table class="t"><tr><th>Stick</th><th>Drift score</th><th>Diagnosis</th><th>Center offset</th><th>Direction</th><th>Noise (r99)</th><th>Max excursion</th><th>Suggested deadzone</th></tr>
+            <tr id="rowL"></tr><tr id="rowR"></tr></table>
+          <div class="abs" style="left:14px;bottom:14px;display:flex;gap:8px"><span class="btn" id="applyBtn">Use as correction</span><span class="btn ghost">Copy values</span></div>
+          <div class="abs" style="right:14px;bottom:22px;font:400 12px var(--sans);color:var(--text-3)" id="rFoot">Samples: 0 per stick · 1000 Hz</div>
+        </div>
+      </section>
+
+      <!-- GATE -->
+      <section class="scene" id="gate">
+        <div class="panel" style="left:0;top:0;width:346px;height:470px"><div class="ph">Left stick gate<span class="v" id="gLv">avg 2.5%</span></div><canvas id="gL" style="left:8px;top:40px;width:330px;height:330px"></canvas><canvas id="bL" style="left:14px;top:382px;width:318px;height:76px"></canvas></div>
+        <div class="panel" style="left:358px;top:0;width:346px;height:470px"><div class="ph">Right stick gate<span class="v" id="gRv">avg 2.0%</span></div><canvas id="gR" style="left:8px;top:40px;width:330px;height:330px"></canvas><canvas id="bR" style="left:14px;top:382px;width:318px;height:76px"></canvas></div>
+        <div class="panel" style="left:0;top:482px;width:704px;height:176px">
+          <table class="t"><tr><th>Stick</th><th>Average error</th><th>Worst sector</th><th>Suggested outer deadzone</th></tr>
+            <tr><td>Left</td><td class="m" id="gT1"></td><td class="m" id="gT2"></td><td class="m" id="gT3"></td></tr>
+            <tr><td>Right</td><td class="m" id="gT4"></td><td class="m" id="gT5"></td><td class="m" id="gT6"></td></tr></table>
+        </div>
+        <div class="panel" style="left:716px;top:0;width:300px;height:658px">
+          <div class="ph">Triggers</div>
+          <canvas id="tg" style="left:14px;top:40px;width:272px;height:150px"></canvas>
+          <div class="abs" style="left:0;right:0;top:200px">
+            <div class="rw">LT now<span class="v m" id="tgL">0</span></div>
+            <div class="rw">LT rest floor / travel<span class="v m">0.0% / 100%</span></div>
+            <div class="rw">RT now<span class="v m" id="tgR">0</span></div>
+            <div class="rw">RT rest floor / travel<span class="v m">6.0% / 98.4%</span></div>
+          </div>
+          <div class="ph" style="position:absolute;top:342px;left:0;right:0;border-top:1px solid var(--line-soft)">Polling<span class="v" id="gHz">250 Hz</span></div>
+          <canvas id="ph" style="left:14px;top:388px;width:272px;height:110px"></canvas>
+          <div class="abs" style="left:0;right:0;top:506px">
+            <div class="rw">Median interval<span class="v m">4.00 ms</span></div>
+            <div class="rw">99th percentile<span class="v m">4.31 ms</span></div>
+            <div class="rw">Dropped (60 s)<span class="v m">0</span></div>
+            <div class="rw">Sampler<span class="v m">1000 Hz</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CORRECTION -->
+      <section class="scene" id="correction">
+        <div class="setting" style="top:0"><div class="tx"><b>Anti-drift correction</b><small>Games read a virtual Xbox 360 controller with the drift removed</small></div><div class="ctl"><span id="cOnTxt">Off</span><div class="tog" id="cTog"><i></i></div></div></div>
+        <div class="setting" style="top:72px"><div class="tx"><b>Deadzone shape</b><small>Shaped follows your measured drift cloud, per 5°</small></div><div class="ctl"><div class="seg"><span id="segS">Shaped</span><span id="segC" class="on">Circle</span></div></div></div>
+        <div class="setting" style="top:144px"><div class="tx"><b>Left stick inner deadzone</b><small>From rest test, 7 Nov 2026 14:32</small></div><div class="ctl"><div class="slider"><b style="width:35%"></b><i style="left:35%"></i></div><span style="width:44px;text-align:right">7.0%</span></div></div>
+        <div class="setting" style="top:216px"><div class="tx"><b>Right stick inner deadzone</b><small>From rest test, 7 Nov 2026 14:32</small></div><div class="ctl"><div class="slider"><b style="width:12.5%"></b><i style="left:12.5%"></i></div><span style="width:44px;text-align:right">2.5%</span></div></div>
+        <div class="setting" style="top:288px"><div class="tx"><b>Outer deadzone</b><small>Lets weak diagonals still reach 100%</small></div><div class="ctl"><div class="slider"><b style="width:31%"></b><i style="left:31%"></i></div><span style="width:44px;text-align:right">6.2%</span></div></div>
+        <div class="setting" style="top:360px"><div class="tx"><b>Hide physical controller</b><small>HidHide prevents double input in games</small></div><div class="ctl"><div class="tog on"><i></i></div></div></div>
+        <div class="setting" style="top:432px"><div class="tx"><b>Virtual controller driver</b><small>ViGEmBus 1.22.0 installed</small></div><div class="ctl"><span class="btn">Check again</span></div></div>
+        <div class="setting" style="top:504px;height:154px;display:block;padding:14px 16px">
+          <div style="display:flex;font:500 13.5px var(--sans)">Output preview<span style="margin-left:auto;font:400 12px var(--mono);color:var(--text-2)" id="cOut">x 0.0  y 0.0</span></div>
+          <canvas id="cS" style="left:16px;top:42px;width:566px;height:100px"></canvas>
+        </div>
+        <div class="panel" style="left:612px;top:0;width:404px;height:658px">
+          <div class="ph">Left stick deadzone<span class="v">scale ±10%</span></div>
+          <canvas id="cP" style="left:12px;top:44px;width:380px;height:380px"></canvas>
+          <div class="abs" style="left:0;right:0;top:436px">
+            <div class="rw">Mode<span class="v" id="cMode">Circle 7.0%</span></div>
+            <div class="rw">Dead area<span class="v m" id="cArea">0.49%</span></div>
+            <div class="rw">Precision recovered<span class="v m" id="cGain">0%</span></div>
+            <div class="rw">Raw input<span class="v m" id="cRaw"></span></div>
+            <div class="rw">Corrected output<span class="v m" id="cOut2"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTORY -->
+      <section class="scene" id="history">
+        <div class="panel" style="left:0;top:0;width:1016px;height:316px"><div class="ph">Drift score<span class="v" style="font-family:var(--sans)"><span style="color:var(--accent)">━</span> Left stick &nbsp; <span style="color:#8A8D94">━</span> Right stick</span></div><canvas id="hC" style="left:0;top:40px;width:1014px;height:274px"></canvas></div>
+        <div class="panel" style="left:0;top:328px;width:1016px;height:330px">
+          <table class="t"><tr><th>Date</th><th>Stick</th><th>Score</th><th>Diagnosis</th><th>Offset</th><th>Direction</th><th>Noise (r99)</th><th>Deadzone</th></tr>
+            <tr><td>7 Nov 2026, 14:32</td><td>Left</td><td class="m">72</td><td><span class="dot" style="background:var(--warn)"></span>Mild drift</td><td class="m">4.1%</td><td class="m">37°</td><td class="m">1.4%</td><td class="m">7.0%</td></tr>
+            <tr><td>7 Nov 2026, 14:32</td><td>Right</td><td class="m">96</td><td><span class="dot" style="background:var(--accent)"></span>Healthy</td><td class="m">0.6%</td><td class="m">211°</td><td class="m">0.9%</td><td class="m">2.5%</td></tr>
+            <tr><td>31 Oct 2026, 21:05</td><td>Left</td><td class="m">76</td><td><span class="dot" style="background:#C9B458"></span>Trace drift</td><td class="m">3.6%</td><td class="m">38°</td><td class="m">1.3%</td><td class="m">6.5%</td></tr>
+            <tr><td>24 Oct 2026, 19:48</td><td>Left</td><td class="m">80</td><td><span class="dot" style="background:#C9B458"></span>Trace drift</td><td class="m">3.0%</td><td class="m">36°</td><td class="m">1.3%</td><td class="m">5.5%</td></tr>
+            <tr><td>17 Oct 2026, 22:11</td><td>Left</td><td class="m">84</td><td><span class="dot" style="background:#C9B458"></span>Trace drift</td><td class="m">2.5%</td><td class="m">35°</td><td class="m">1.2%</td><td class="m">5.0%</td></tr>
+            <tr><td>10 Oct 2026, 18:30</td><td>Left</td><td class="m">88</td><td><span class="dot" style="background:#C9B458"></span>Trace drift</td><td class="m">1.9%</td><td class="m">33°</td><td class="m">1.1%</td><td class="m">4.0%</td></tr>
+            <tr><td>3 Oct 2026, 20:02</td><td>Left</td><td class="m">90</td><td><span class="dot" style="background:var(--accent)"></span>Healthy</td><td class="m">1.5%</td><td class="m">31°</td><td class="m">1.1%</td><td class="m">3.5%</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- REPORT -->
+      <section class="scene" id="report">
+        <div class="paperwrap"><div class="paper">
+          <div class="abs" style="left:28px;top:24px;right:28px;display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font:700 15px var(--display)">Controller diagnosis report</div><div style="font:400 10px var(--mono);color:#6B6F78">Drift Doctor 1.0.0 · #0031</div></div>
+          <div class="abs" style="left:28px;right:28px;top:48px;height:1px;background:var(--paper-ink)"></div>
+          <div class="abs" style="left:28px;right:28px;top:60px;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px 16px">
+            <div><div class="lab">Device</div><div class="val">Xbox Wireless Controller</div></div>
+            <div><div class="lab">Model</div><div class="val">1914</div></div>
+            <div><div class="lab">Date</div><div class="val">7 Nov 2026, 14:32</div></div>
+            <div><div class="lab">Connection</div><div class="val">USB · XInput slot 1</div></div>
+            <div><div class="lab">Test</div><div class="val">10 s rest, 10k samples</div></div>
+            <div><div class="lab">Deadzone</div><div class="val">None (raw input)</div></div>
+          </div>
+          <div class="abs" style="left:28px;right:28px;top:156px;padding:12px 14px;background:rgba(255,255,255,.9);border:1px solid var(--paper-ink)">
+            <div class="lab">Diagnosis</div><div style="font:700 18px var(--display);margin-top:3px">Mild drift, left stick, 4.1% toward 37°</div>
+            <div style="font:400 11.5px var(--sans);color:#454A54;margin-top:4px">Drift score 72/100 (right stick 96). Offset present at rest with no input; score falling about 4 points per week.</div></div>
+          <canvas id="rpP" style="left:28px;top:266px;width:220px;height:220px"></canvas>
+          <canvas id="rpT" style="left:262px;top:266px;width:250px;height:220px"></canvas>
+          <div class="abs" style="left:28px;right:28px;top:496px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+            <div><div class="lab">Center offset</div><div class="val" style="font:500 15px var(--mono)">4.1% · 37°</div></div>
+            <div><div class="lab">Noise r99</div><div class="val" style="font:500 15px var(--mono)">1.4%</div></div>
+            <div><div class="lab">Gate error</div><div class="val" style="font:500 15px var(--mono)">2.5%</div></div>
+            <div><div class="lab">Report rate</div><div class="val" style="font:500 15px var(--mono)">250 Hz</div></div>
+          </div>
+          <canvas id="rpH" style="left:28px;top:546px;width:484px;height:50px"></canvas>
+        </div></div>
+        <div class="panel" style="left:652px;top:0;width:364px;height:658px">
+          <div class="ph">Include</div>
+          <div class="rw" style="gap:10px"><span class="chk"></span><span style="color:var(--text)">Rest test cloud and trace</span></div>
+          <div class="rw" style="gap:10px"><span class="chk"></span><span style="color:var(--text)">Gate circularity</span></div>
+          <div class="rw" style="gap:10px"><span class="chk"></span><span style="color:var(--text)">Drift history (12 weeks)</span></div>
+          <div class="rw" style="gap:10px"><span class="chk off"></span><span style="color:var(--text)">Raw samples as CSV</span></div>
+          <div class="rw" style="gap:10px"><span class="chk off"></span><span style="color:var(--text)">Serial number</span></div>
+          <div class="ph" style="margin-top:12px;border-top:1px solid var(--line-soft)">Export</div>
+          <div class="rw">Format<span class="v"><span class="select" style="height:26px">PNG <svg width="10" height="10"><path d="M2 3.5l3 3 3-3" fill="none" stroke="#A6A9B0" stroke-width="1.3"/></svg></span></span></div>
+          <div class="rw">Size<span class="v m">1080 × 1236</span></div>
+          <div class="rw">File name<span class="v m" style="font-size:11.5px">DriftDoctor-2026-11-07.png</span></div>
+          <div class="abs" style="left:14px;right:14px;bottom:14px;display:flex;gap:8px"><span class="btn primary" style="flex:1;justify-content:center">Export report</span><span class="btn">Copy image</span></div>
+        </div>
+      </section>
+    </div>
+    <div class="status"><span><i></i>Xbox Wireless Controller · P1 · USB</span><span id="stHz">250 Hz</span><span>Sampler 1000 Hz</span><span>ViGEmBus 1.22.0</span><span class="r" id="stCorr">Correction off</span></div>
+  </div>
+  <svg class="cursor" id="cursor" viewBox="0 0 22 22"><path d="M3 2 L3 18 L7.2 14.2 L10 20.5 L12.8 19.3 L10.1 13.2 L15.8 13.2 Z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg>
+</div>
+
+<script>
+(function(){
+const TAU = Math.PI * 2, P = 5;
+const C = {accent:'#3CCB7F', y:'#7E8189', warn:'#E3A33A', plot:'#18191C', text:'#E8E9EC', t2:'#A6A9B0', t3:'#72757D', ink:'#1D2127'};
+const MONO = '"SF Mono", ui-monospace, Consolas, monospace', SANS = '"SF Pro Text", "SF Pro", system-ui, sans-serif';
+const I = { // 20px line icons, one set
+  monitor:'<path d="M2.5 10.5h3l2-5 3.5 10 2.5-6.5 1.5 1.5h3"/>',
+  rest:'<circle cx="10" cy="11" r="6.5"/><path d="M10 11V7.5M8 2.5h4"/>',
+  gate:'<circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="2.5"/><path d="M10 1.5v2M10 16.5v2M1.5 10h2M16.5 10h2"/>',
+  correction:'<path d="M3 6h7M14 6h3M3 14h3M10 14h7"/><circle cx="12" cy="6" r="2"/><circle cx="8" cy="14" r="2"/>',
+  history:'<path d="M3.5 10a6.5 6.5 0 1 0 2-4.7"/><path d="M3 3.5v3h3"/><path d="M10 6.5V10l2.5 2"/>',
+  report:'<path d="M5 2.5h6.5L15 6v11.5H5z"/><path d="M11.5 2.5V6H15M7.5 10h5M7.5 13h5"/>',
+  settings:'<circle cx="10" cy="10" r="2.6"/><path d="M10 2.5v2.2M10 15.3v2.2M2.5 10h2.2M15.3 10h2.2M4.7 4.7l1.6 1.6M13.7 13.7l1.6 1.6M4.7 15.3l1.6-1.6M13.7 6.3l1.6-1.6"/>',
+  play:'<path d="M6.5 4.5l9 5.5-9 5.5z"/>', export:'<path d="M10 3v9M6.5 6.5L10 3l3.5 3.5M4 13v3.5h12V13"/>', reset:'<path d="M4 10a6 6 0 1 0 1.8-4.3"/><path d="M4 3.5V6h2.5"/>'};
+const icon = (k, c) => `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="${c || 'currentColor'}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${I[k]}</svg>`;
+const icon16 = (k, c) => icon(k, c).replace('width="20" height="20"', 'width="16" height="16"');
+const SCENES = [['monitor','Monitor'],['rest','Rest test'],['gate','Gate & triggers'],['correction','Correction'],['history','History'],['report','Report']];
+const CHEV = '<svg width="10" height="10"><path d="M2 3.5l3 3 3-3" fill="none" stroke="#A6A9B0" stroke-width="1.3"/></svg>';
+const TOOLBARS = {
+  monitor:`<span class="title">Monitor</span><div class="seg"><span class="on">Raw</span><span>Corrected</span></div><span class="btn">${icon16('rest')}Rest test</span>`,
+  rest:`<span class="title">Rest test</span><span class="select">Duration: 10 seconds ${CHEV}</span><span class="btn primary" id="startBtn">${icon16('play', '#082014')}<span id="startTxt">Start test</span></span>`,
+  gate:`<span class="title">Gate &amp; triggers</span><span class="btn">${icon16('reset')}Reset</span>`,
+  correction:`<span class="title">Correction</span><span class="btn">Revert</span><span class="btn primary">Apply</span>`,
+  history:`<span class="title">History</span><span class="select">Xbox Wireless Controller (P1) ${CHEV}</span><span class="btn">${icon16('export')}Export CSV</span>`,
+  report:`<span class="title">Report</span><span class="btn">${icon16('export')}Export report</span>`};
+
+// ---------- deterministic noise ----------
+const fract = x => x - Math.floor(x), hash = i => fract(Math.sin(i * 12.9898 + 78.233) * 43758.5453);
+const nz = i => (hash(i) + hash(i + 17.3) + hash(i + 31.7) - 1.5) / 0.75;
+const wrap = (t, p) => ((t % p) + p) % p, clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); }, lerp = (a, b, k) => a + (b - a) * k;
+function gauss(i){ const u1 = Math.max(1e-6, hash(i * 2 + 1)), u2 = hash(i * 2 + 2), r = Math.sqrt(-2 * Math.log(u1)); return [r * Math.cos(TAU * u2), r * Math.sin(TAU * u2)]; }
+function hexA(hex, a){ const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
+
+// ---------- rest clouds + shaped deadzone (same math as the Rust core) ----------
+const DRIFT_L = [0.0327, 0.0247], DRIFT_R = [-0.0051, -0.0031];
+function cloud(n, c, sa, sb, ang, seed){ const a = ang * Math.PI / 180, ca = Math.cos(a), sn = Math.sin(a), q = 0.001, out = [];
+  for (let i = 0; i < n; i++){ const g = gauss(i + seed), x = g[0] * sa, y = g[1] * sb; out.push([Math.round((c[0] + x * ca - y * sn) / q) * q, Math.round((c[1] + x * sn + y * ca) / q) * q]); }
+  return out; }
+const CL = cloud(1500, DRIFT_L, 0.0052, 0.0030, 37, 11), CR = cloud(1500, DRIFT_R, 0.0031, 0.0028, 0, 5011);
+function pctl(s, p){ const pos = p * (s.length - 1), lo = Math.floor(pos), hi = Math.ceil(pos); return s[lo] + (s[hi] - s[lo]) * (pos - lo); }
+function shapeFrom(pts){ const raw = []; for (let i = 0; i < 72; i++){ const a = i / 72 * TAU, ux = Math.cos(a), uy = Math.sin(a);
+  raw.push(Math.max(0.01, pctl(pts.map(p => p[0] * ux + p[1] * uy).sort((x, y) => x - y), 0.99) * 1.15)); }
+  return raw.map((r, i) => Math.max(r, (raw[(i + 71) % 72] + 2 * r + raw[(i + 1) % 72]) / 4)); }
+const SHAPE_L = shapeFrom(CL);
+const shapeAt = (arr, deg) => { const pos = wrap(deg, 360) / 5, i = Math.floor(pos) % 72, f = pos - Math.floor(pos); return arr[i] + (arr[(i + 1) % 72] - arr[i]) * f; };
+
+// ---------- live signals, periodic in P so GIFs loop ----------
+const env = t => 0.5 - 0.5 * Math.cos(TAU * t / P);
+function stickL(t){ const k = Math.floor(wrap(t, P) * 250), e = smooth(env(t) * 1.25 - 0.12), a = TAU * 2 * t / P + 0.4;
+  return [DRIFT_L[0] + e * 0.84 * Math.cos(a) + nz(k) * 0.004, DRIFT_L[1] + e * 0.84 * Math.sin(a) + nz(k + 911) * 0.004]; }
+function stickR(t){ const k = Math.floor(wrap(t, P) * 250), e = 1 - smooth(env(t) * 1.3);
+  return [DRIFT_R[0] + e * 0.34 * Math.sin(TAU * 3 * t / P) + nz(k + 77) * 0.003, DRIFT_R[1] + e * 0.2 * Math.sin(TAU * 2 * t / P + 1) + nz(k + 401) * 0.003]; }
+const trigR = t => Math.pow(clamp(Math.sin(TAU * 3 * t / P), 0, 1), 1.4), trigL = t => 0.62 * Math.pow(clamp(Math.sin(TAU * t / P - 2.2), 0, 1), 2);
+const pollHz = t => 249.7 + nz(Math.floor(wrap(t, P) * 25) + 3) * 0.9;
+
+// ---------- canvas helpers ----------
+function cv(id){ const c = document.getElementById(id), dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
+  if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)){ c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+  const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h); return {g, w, h}; }
+function line(g, pts, color, width){ if (pts.length < 2) return; g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]); g.strokeStyle = color; g.lineWidth = width || 1.5; g.lineJoin = 'round'; g.stroke(); }
+function txt(g, s, x, y, color, size, align, font){ g.font = `400 ${size || 10}px ${font || MONO}`; g.fillStyle = color; g.textAlign = align || 'left'; g.textBaseline = 'middle'; g.fillText(s, x, y); }
+function rr(g, x, y, w, h, r){ g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+
+// The signature widget: polar stick plot. o = {zoom, cur, trail, cloud, cloudN, center, r99, ring, dz, shape, morph, circleRef, peaks, ideal, paper}
+function polar(id, o){
+  const {g, w, h} = cv(id), cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 20, paper = !!o.paper;
+  const ac = paper ? C.ink : C.accent, gr = paper ? 'rgba(29,33,39,.30)' : '#34363C', sf = paper ? 'rgba(29,33,39,.13)' : '#26282D';
+  if (!paper){ g.fillStyle = C.plot; rr(g, 0, 0, w, h, 6); g.fill(); }
+  const M = q => [cx + q[0] * o.zoom * R, cy - q[1] * o.zoom * R];
+  for (let i = 1; i <= 4; i++){ g.beginPath(); g.arc(cx, cy, R * i / 4, 0, TAU); g.strokeStyle = i === 4 ? gr : sf; g.lineWidth = 1; g.stroke(); }
+  for (let k = 0; k < 8; k++){ const a = k * TAU / 8; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * R, cy - Math.sin(a) * R); g.strokeStyle = sf; g.stroke(); }
+  if (!paper) [[0, '0°'], [90, '90°'], [180, '180°'], [270, '270°']].forEach(([d, s]) => { const a = d * Math.PI / 180; txt(g, s, cx + Math.cos(a) * (R + 11), cy - Math.sin(a) * (R + 11), C.t3, 9.5, 'center'); });
+  if (o.ideal){ g.beginPath(); g.arc(cx, cy, R * o.zoom, 0, TAU); g.setLineDash([3, 4]); g.strokeStyle = '#6E7179'; g.stroke(); g.setLineDash([]); }
+  if (o.peaks){ const pts = o.peaks.map((r, i) => { const a = (i + 0.5) * 10 * Math.PI / 180; return M([Math.cos(a) * r, Math.sin(a) * r]); }); pts.push(pts[0]); line(g, pts, ac, 1.8); }
+  if (o.dz !== undefined){ const pts = []; for (let i = 0; i <= 120; i++){ const deg = i * 3, r = o.shape ? lerp(o.dz, shapeAt(o.shape, deg), o.morph) : o.dz; pts.push(M([Math.cos(deg * Math.PI / 180) * r, Math.sin(deg * Math.PI / 180) * r])); }
+    g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fillStyle = hexA(C.accent, 0.12); g.fill(); g.strokeStyle = C.accent; g.lineWidth = 1.5; g.stroke(); }
+  if (o.circleRef){ g.beginPath(); g.arc(cx, cy, o.circleRef * o.zoom * R, 0, TAU); g.setLineDash([4, 4]); g.strokeStyle = '#8A8D94'; g.lineWidth = 1; g.stroke(); g.setLineDash([]); }
+  if (o.cloud){ const n = o.cloudN === undefined ? o.cloud.length : o.cloudN; g.fillStyle = paper ? 'rgba(29,33,39,.55)' : hexA(C.accent, 0.55);
+    for (let i = 0; i < n; i++){ const p = M(o.cloud[i]); g.fillRect(p[0] - 1, p[1] - 1, 2, 2); } }
+  if (o.center){ const c = M(o.center); g.strokeStyle = paper ? C.ink : C.text; g.lineWidth = 1.2; g.beginPath(); g.moveTo(cx, cy); g.lineTo(c[0], c[1]); g.stroke();
+    g.beginPath(); g.moveTo(c[0] - 5, c[1]); g.lineTo(c[0] + 5, c[1]); g.moveTo(c[0], c[1] - 5); g.lineTo(c[0], c[1] + 5); g.stroke();
+    if (o.r99){ g.beginPath(); g.arc(c[0], c[1], o.r99 * o.zoom * R, 0, TAU); g.lineWidth = 1; g.stroke(); } }
+  if (o.ring){ g.beginPath(); g.arc(cx, cy, o.ring * o.zoom * R, 0, TAU); g.setLineDash([5, 4]); g.strokeStyle = paper ? '#C0392B' : C.warn; g.lineWidth = 1.3; g.stroke(); g.setLineDash([]); }
+  if (o.trail){ const n = o.trail.length; for (let i = 1; i < n; i++){ const a = M(o.trail[i - 1]), b = M(o.trail[i]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.strokeStyle = hexA(C.accent, i / n); g.lineWidth = 1.8; g.stroke(); } }
+  if (o.cur){ const p = M([clamp(o.cur[0], -1.2, 1.2), clamp(o.cur[1], -1.2, 1.2)]); g.beginPath(); g.arc(p[0], p[1], 5, 0, TAU); g.fillStyle = C.text; g.fill(); g.strokeStyle = C.plot; g.lineWidth = 2; g.stroke(); }
+}
+
+// time lanes: lanes = [{label, series:[{f, color}], range}]
+function lanes(id, t, ls){
+  const {g, w, h} = cv(id), lh = h / ls.length, x0 = 64, x1 = w - 12;
+  ls.forEach((l, i) => { const top = i * lh, mid = top + lh / 2;
+    if (i) { g.beginPath(); g.moveTo(0, top + 0.5); g.lineTo(w, top + 0.5); g.strokeStyle = '#34363C'; g.stroke(); }
+    txt(g, l.label, 14, mid, C.t2, 12, 'left', SANS);
+    for (let s = 1; s < 5; s++){ const x = x0 + s * (x1 - x0) / 5; g.beginPath(); g.moveTo(x + 0.5, top + 6); g.lineTo(x + 0.5, top + lh - 6); g.strokeStyle = '#303237'; g.stroke(); }
+    g.beginPath(); g.moveTo(x0, mid + 0.5); g.lineTo(x1, mid + 0.5); g.strokeStyle = '#34363C'; g.stroke();
+    const Y = v => lerp(top + lh - 8, top + 8, (v - l.range[0]) / (l.range[1] - l.range[0]));
+    l.series.forEach(s => { const pts = []; for (let x = x0; x <= x1; x += 2) pts.push([x, Y(clamp(s.f(t - (x1 - x) / (x1 - x0) * P), l.range[0], l.range[1]))]); line(g, pts, s.color, 1.5); }); });
+}
+
+// ---------- plumbing ----------
+const nav = document.getElementById('nav');
+SCENES.forEach(([id, name]) => { const d = document.createElement('div'); d.className = 'navi'; d.dataset.s = id;
+  d.innerHTML = icon(id) + name + (id === 'rest' ? '<span class="badge">L 72</span>' : ''); d.onclick = () => setScene(id); nav.appendChild(d); });
+document.getElementById('navSettings').innerHTML = icon('settings') + 'Settings';
+let current = 'monitor', lastT = 2;
+const cursor = document.getElementById('cursor');
+function setCursor(x, y, down){ if (x === null){ cursor.style.display = 'none'; return; } cursor.style.display = 'block';
+  cursor.style.left = (232 + 16 + x) + 'px'; cursor.style.top = (32 + 68 + y) + 'px'; cursor.style.transform = down ? 'scale(.86)' : 'none'; }
+window.setScene = function(name){ current = name;
+  document.querySelectorAll('.scene').forEach(s => s.style.display = s.id === name ? 'block' : 'none');
+  document.querySelectorAll('#nav .navi').forEach(n => n.classList.toggle('on', n.dataset.s === name));
+  document.getElementById('toolbar').innerHTML = TOOLBARS[name]; document.getElementById('stCorr').textContent = 'Correction off'; window.renderAt(lastT); };
+const sg = v => (v >= 0 ? '+' : '-') + Math.abs(v * 100).toFixed(1);
+const trail = (fn, t, n, dt) => { const out = []; for (let i = n; i >= 0; i--) out.push(fn(t - i * dt)); return out; };
+const $ = id => document.getElementById(id);
+
+function rMonitor(t){
+  const l = stickL(t), r = stickR(t);
+  polar('pL', {zoom:1, cur:l, trail:trail(stickL, t, 110, 1 / 100), ring:0.055});
+  polar('pR', {zoom:1, cur:r, trail:trail(stickR, t, 110, 1 / 100), ring:0.015});
+  lanes('lanes', t, [{label:'Left', range:[-1, 1], series:[{f:x => stickL(x)[1], color:C.y}, {f:x => stickL(x)[0], color:C.accent}]},
+    {label:'Right', range:[-1, 1], series:[{f:x => stickR(x)[1], color:C.y}, {f:x => stickR(x)[0], color:C.accent}]},
+    {label:'LT / RT', range:[0, 1], series:[{f:trigL, color:C.y}, {f:trigR, color:C.accent}]}]);
+  $('mLv').textContent = `x ${sg(l[0])}  y ${sg(l[1])}`; $('mRv').textContent = `x ${sg(r[0])}  y ${sg(r[1])}`;
+  const lt = Math.round(trigL(t) * 255), rt = Math.round(trigR(t) * 255);
+  $('vLT').textContent = lt; $('vRT').textContent = rt; $('bLT').style.width = (lt / 2.55) + '%'; $('bRT').style.width = (rt / 2.55) + '%';
+  const hz = pollHz(t); $('vHz').textContent = Math.round(hz) + ' Hz'; $('vDt').textContent = (1000 / hz).toFixed(2) + ' ms'; $('stHz').textContent = Math.round(hz) + ' Hz';
+  $('vBtn').textContent = rt > 200 ? 'RT, A' : (lt > 60 ? 'LT' : 'none');
+  setCursor(null);
+}
+
+function legend(el){ const k = (sym, s) => `<div style="display:flex;align-items:center;gap:8px;height:26px;font:400 12.5px var(--sans);color:var(--text-2)">${sym}${s}</div>`;
+  el.innerHTML = k('<svg width="14" height="14"><circle cx="4" cy="5" r="1.2" fill="#3CCB7F"/><circle cx="9" cy="8" r="1.2" fill="#3CCB7F"/><circle cx="6" cy="10" r="1.2" fill="#3CCB7F"/></svg>', 'Samples')
+   + k('<svg width="14" height="14"><path d="M2 7h10M7 2v10" stroke="#E8E9EC" stroke-width="1.3"/></svg>', 'Rest center')
+   + k('<svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="none" stroke="#E8E9EC"/></svg>', 'Noise r99')
+   + k('<svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#E3A33A" stroke-dasharray="3 2" stroke-width="1.3"/></svg>', 'Drift radius'); }
+function row(stick, d, show){ const dash = '<span style="color:var(--text-3)">—</span>';
+  return show ? `<td>${stick}</td><td class="m">${d.score}</td><td><span class="dot" style="background:${d.c}"></span>${d.sev}</td><td class="m">${d.off}</td><td class="m">${d.dir}</td><td class="m">${d.r99}</td><td class="m">${d.max}</td><td class="m" style="color:var(--accent);font-weight:600">${d.dz}</td>`
+    : `<td>${stick}</td>` + `<td>${dash}</td>`.repeat(7); }
+function rRest(t){
+  t = wrap(t, 6);
+  const p = clamp((t - 0.7) / 4.3, 0, 1), n = Math.floor(p * 1500), done = t >= 5.0, running = t >= 0.7 && !done;
+  const wob = k => nz(Math.floor(t * 40) + k) * 0.0015 * (1 - p);
+  polar('rL', {zoom:100 / 8, cloud:CL, cloudN:n, cur:n ? CL[n - 1] : [0, 0], center:n > 30 ? [DRIFT_L[0] + wob(0), DRIFT_L[1] + wob(5)] : null, r99:done ? 0.014 : null, ring:done ? 0.055 : null});
+  polar('rR', {zoom:100 / 8, cloud:CR, cloudN:n, cur:n ? CR[n - 1] : [0, 0], center:n > 30 ? DRIFT_R : null, r99:done ? 0.009 : null, ring:done ? 0.015 : null});
+  legend($('lgL')); legend($('lgR'));
+  const info = $('rInfo');
+  $('rIco').innerHTML = done ? '<circle cx="10" cy="10" r="8" fill="none" stroke="#3CCB7F" stroke-width="1.5"/><path d="M6.5 10.2l2.4 2.4 4.6-4.8" fill="none" stroke="#3CCB7F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' : '<circle cx="10" cy="10" r="8" fill="none" stroke="#7DB7E8" stroke-width="1.5"/><path d="M10 9v5M10 6.2v.1" stroke="#7DB7E8" stroke-width="1.8" stroke-linecap="round"/>';
+  info.style.background = done ? '#233529' : '#26313A'; info.style.borderColor = done ? '#2F5A3E' : '#2F3E4A';
+  $('rInfoTxt').textContent = done ? 'Test complete. Results saved to history.' : running ? 'Recording. Keep your hands off the controller.' : "Put the controller on a flat surface and don't touch the sticks.";
+  $('rInfoR').textContent = running ? `${(10 * (1 - p)).toFixed(1)} s left · ${Math.round(p * 10000)} samples` : '';
+  $('rProg').style.width = running ? (p * 100) + '%' : '0';
+  $('rowL').innerHTML = row('Left', {score:72, sev:'Mild drift', c:C.warn, off:'4.1%', dir:'37°', r99:'1.4%', max:'5.9%', dz:'7.0%'}, done);
+  $('rowR').innerHTML = row('Right', {score:96, sev:'Healthy', c:C.accent, off:'0.6%', dir:'211°', r99:'0.9%', max:'1.7%', dz:'2.5%'}, done);
+  $('rFoot').textContent = `Samples: ${done ? '10 000' : Math.round(p * 10000)} per stick · 1000 Hz`;
+  $('applyBtn').style.opacity = done ? 1 : 0.45;
+  const sb = $('startBtn'); if (sb){ $('startTxt').textContent = running ? 'Stop' : (done ? 'Run again' : 'Start test'); sb.style.background = running ? '#3A3B41' : ''; sb.style.color = running ? '#E8E9EC' : ''; sb.style.borderColor = running ? '#4A4B51' : ''; }
+  const bx = 960, by = -36;
+  if (t < 0.5){ const k = smooth(t / 0.5); setCursor(lerp(640, bx, k), lerp(240, by, k), false); }
+  else if (t < 0.75) setCursor(bx, by, t < 0.62);
+  else if (t < 1.6){ const k = smooth((t - 0.75) / 0.85); setCursor(lerp(bx, 700, k), lerp(by, 300, k), false); }
+  else setCursor(700, 300, false);
+}
+
+const gateR = th => 0.985 + 0.035 * Math.cos(4 * th) + 0.012 * Math.cos(th - 0.7), gateRr = th => 0.99 + 0.028 * Math.cos(4 * th) - 0.01 * Math.cos(th + 1.9);
+const PK_L = Array.from({length:36}, (_, i) => gateR((i + 0.5) * 10 * Math.PI / 180)), PK_R = Array.from({length:36}, (_, i) => gateRr((i + 0.5) * 10 * Math.PI / 180));
+function gstat(pk){ const err = pk.map(r => (r - 1) * 100), avg = err.reduce((a, b) => a + Math.abs(b), 0) / 36; let mi = 0; err.forEach((e, i) => { if (Math.abs(e) > Math.abs(err[mi])) mi = i; });
+  return {err, avg, max:err[mi], at:mi * 10 + 5, outer:(1 - Math.min(...pk)) * 100}; }
+const GL = gstat(PK_L), GR = gstat(PK_R);
+function bars(id, st, th){ const {g, w, h} = cv(id), mid = h / 2, bw = w / 36, cur = Math.floor(wrap(th * 180 / Math.PI, 360) / 10);
+  g.beginPath(); g.moveTo(0, mid + 0.5); g.lineTo(w, mid + 0.5); g.strokeStyle = '#3A3B41'; g.stroke();
+  st.err.forEach((e, i) => { const hh = clamp(e / 8, -1, 1) * (mid - 10); g.fillStyle = i === cur ? C.text : (Math.abs(e) > 5 ? C.warn : hexA(C.accent, 0.75)); g.fillRect(i * bw + 1, Math.min(mid, mid - hh), bw - 2, Math.abs(hh) || 1); });
+  txt(g, '+8%', 0, 6, C.t3, 9); txt(g, '−8%', 0, h - 6, C.t3, 9); }
+function rGate(t){
+  const th = TAU * 2 * t / P, th2 = th + 1.3, pos = (f, a) => [Math.cos(a) * f(a), Math.sin(a) * f(a)];
+  polar('gL', {zoom:0.86, cur:pos(gateR, th), trail:trail(x => pos(gateR, TAU * 2 * x / P), t, 40, 1 / 100), peaks:PK_L, ideal:true});
+  polar('gR', {zoom:0.86, cur:pos(gateRr, th2), trail:trail(x => pos(gateRr, TAU * 2 * x / P + 1.3), t, 40, 1 / 100), peaks:PK_R, ideal:true});
+  bars('bL', GL, th); bars('bR', GR, th2);
+  $('gLv').textContent = 'avg ' + GL.avg.toFixed(1) + '%'; $('gRv').textContent = 'avg ' + GR.avg.toFixed(1) + '%';
+  [[GL, 1], [GR, 4]].forEach(([s, k]) => { $('gT' + k).textContent = s.avg.toFixed(1) + '%'; $('gT' + (k + 1)).textContent = `${s.max.toFixed(1)}% at ${s.at}°`; $('gT' + (k + 2)).textContent = s.outer.toFixed(1) + '%'; });
+  const pull = 0.5 - 0.5 * Math.cos(TAU * t / 2.5), lo = x => x, ro = x => Math.pow(clamp((x - 0.06) / 0.92, 0, 0.984), 1.3);
+  { const {g, w, h} = cv('tg'); g.fillStyle = C.plot; rr(g, 0, 0, w, h, 6); g.fill();
+    const X = v => 12 + v * (w - 24), Y = v => h - 12 - v * (h - 24);
+    for (let i = 1; i < 4; i++){ g.strokeStyle = '#26282D'; g.beginPath(); g.moveTo(X(i / 4), 12); g.lineTo(X(i / 4), h - 12); g.moveTo(12, Y(i / 4)); g.lineTo(w - 12, Y(i / 4)); g.stroke(); }
+    const a = [], b = []; for (let i = 0; i <= 64; i++){ const x = i / 64; a.push([X(x), Y(lo(x))]); b.push([X(x), Y(ro(x))]); }
+    line(g, b, C.y, 1.5); line(g, a, C.accent, 1.7);
+    [[lo, C.accent], [ro, C.y]].forEach(([f, c]) => { g.beginPath(); g.arc(X(pull), Y(f(pull)), 4, 0, TAU); g.fillStyle = c; g.fill(); });
+    txt(g, 'LT', X(0.5) - 18, Y(0.62), C.accent, 11, 'left', SANS); txt(g, 'RT', X(0.72), Y(0.5), C.t2, 11, 'left', SANS); }
+  $('tgL').textContent = Math.round(lo(pull) * 255); $('tgR').textContent = Math.round(ro(pull) * 255);
+  { const {g, w, h} = cv('ph'); const bins = [0, 1, 2, 4, 9, 22, 61, 100, 58, 20, 8, 3, 1, 1, 0, 0], bw = w / bins.length;
+    bins.forEach((v, i) => { const hh = v / 100 * (h - 22); g.fillStyle = i === 7 ? C.accent : hexA(C.accent, 0.45); g.fillRect(i * bw + 1, h - 16 - hh, bw - 2, hh); });
+    txt(g, '3.6 ms', 0, h - 6, C.t3, 9.5); txt(g, '4.0', 7.5 * bw, h - 6, C.t2, 9.5, 'center'); txt(g, '4.4 ms', w, h - 6, C.t3, 9.5, 'right'); }
+  $('gHz').textContent = Math.round(pollHz(t)) + ' Hz';
+  setCursor(null);
+}
+
+function morphAt(t){ t = wrap(t, P); return t < 0.6 ? 0 : t < 1.6 ? smooth(t - 0.6) : t < 3.6 ? 1 : t < 4.6 ? 1 - smooth(t - 3.6) : 0; }
+const bump = (t, a, b) => smooth((t - a) / 0.35) * (1 - smooth((t - b + 0.35) / 0.35));
+function corrStick(t){ const tt = wrap(t, P), k = Math.floor(tt * 250), m = bump(tt, 2.0, 3.3) + bump(tt, 4.75, 5.6) + bump(tt + P, 4.75, 5.6);
+  return [DRIFT_L[0] + nz(k) * 0.0035 - m * 0.030, DRIFT_L[1] + nz(k + 300) * 0.0035 + m * 0.040]; }
+function applyDz(v, t){ const m = Math.hypot(v[0], v[1]), deg = Math.atan2(v[1], v[0]) * 180 / Math.PI, dz = lerp(0.07, shapeAt(SHAPE_L, deg), morphAt(t));
+  if (m <= dz) return [0, 0]; const s = Math.min(1, (m - dz) / (1 - dz)); return [v[0] / m * s, v[1] / m * s]; }
+function rCorrection(t){
+  const m = morphAt(t), s = corrStick(t), out = applyDz(s, t), on = m > 0.5;
+  polar('cP', {zoom:10, cloud:CL, cloudN:900, dz:0.07, shape:SHAPE_L, morph:m, circleRef:m > 0.02 ? 0.07 : null, cur:s, trail:trail(corrStick, t, 30, 1 / 100)});
+  lanes('cS', t, [{label:'Raw', range:[-0.02, 0.1], series:[{f:x => corrStick(x)[1], color:C.accent}]}, {label:'Output', range:[-0.02, 0.1], series:[{f:x => applyDz(corrStick(x), x)[1], color:C.accent}]}]);
+  const area = lerp(0.49, SHAPE_L.reduce((a, r) => a + r * r, 0) / 72 * 100, m);
+  $('cArea').textContent = area.toFixed(2) + '%'; $('cGain').textContent = Math.round((1 - area / 0.49) * 100) + '%';
+  $('cMode').textContent = on ? 'Shaped, 72 × 5°' : 'Circle 7.0%';
+  $('cRaw').textContent = `x ${sg(s[0])}  y ${sg(s[1])}`; $('cOut2').textContent = $('cOut').textContent = `x ${sg(out[0])}  y ${sg(out[1])}`;
+  $('cTog').classList.toggle('on', on); $('cOnTxt').textContent = on ? 'On' : 'Off';
+  $('segS').classList.toggle('on', on); $('segC').classList.toggle('on', !on);
+  $('stCorr').textContent = on ? 'Correction on · virtual pad P3' : 'Correction off';
+  const tt = wrap(t, P), tx = 562, ty = 32;
+  if (tt < 0.45){ const k = smooth(tt / 0.45); setCursor(lerp(760, tx, k), lerp(600, ty, k), false); }
+  else if (tt < 0.8) setCursor(tx, ty, tt > 0.5 && tt < 0.65);
+  else if (tt < 1.4){ const k = smooth((tt - 0.8) / 0.6); setCursor(lerp(tx, 760, k), lerp(ty, 600, k), false); }
+  else if (tt < 3.1) setCursor(760, 600, false);
+  else if (tt < 3.5){ const k = smooth((tt - 3.1) / 0.4); setCursor(lerp(760, tx, k), lerp(600, ty, k), false); }
+  else if (tt < 3.8) setCursor(tx, ty, tt > 3.55 && tt < 3.7);
+  else { const k = smooth((tt - 3.8) / 1.0); setCursor(lerp(tx, 760, k), lerp(ty, 600, k), false); }
+}
+
+const WEEKS = ['15 Aug','22 Aug','29 Aug','5 Sep','12 Sep','19 Sep','26 Sep','3 Oct','10 Oct','17 Oct','24 Oct','31 Oct','7 Nov'];
+const HL = [98, 98, 97, 96, 96, 94, 92, 90, 88, 84, 80, 76, 72], HR = [97, 96, 97, 97, 96, 96, 95, 96, 96, 95, 96, 96, 96];
+function rHistory(){
+  const {g, w, h} = cv('hC'), L = 48, Rr = w - 120, T = 14, B = h - 30;
+  const X = i => L + i / 17.5 * (Rr - L), Y = s => B - (s - 40) / 60 * (B - T);
+  [100, 90, 75, 50].forEach(s => { g.beginPath(); g.moveTo(L, Y(s) + 0.5); g.lineTo(Rr, Y(s) + 0.5); g.strokeStyle = '#34363C'; g.setLineDash(s === 100 ? [] : [3, 4]); g.stroke(); g.setLineDash([]); txt(g, String(s), L - 10, Y(s), C.t3, 10, 'right'); });
+  [[90, 'Healthy'], [75, 'Trace'], [50, 'Mild']].forEach(([s, n]) => txt(g, n, Rr + 10, Y(s), C.t2, 12, 'left', SANS));
+  txt(g, 'Moderate', Rr + 10, Y(44), C.t2, 12, 'left', SANS);
+  WEEKS.forEach((d, i) => { if (i % 2 === 0) txt(g, d, X(i), B + 16, C.t3, 10.5, 'center', SANS); });
+  const pr = HR.map((s, i) => [X(i), Y(s)]), pl = HL.map((s, i) => [X(i), Y(s)]);
+  line(g, pr, '#8A8D94', 1.8); line(g, pl, C.accent, 2);
+  pl.forEach(p => { g.beginPath(); g.arc(p[0], p[1], 3, 0, TAU); g.fillStyle = C.accent; g.fill(); });
+  g.setLineDash([4, 4]); line(g, [pl[12], [X(17.5), Y(50)]], hexA(C.accent, 0.6), 1.5); g.setLineDash([]);
+  g.beginPath(); g.arc(X(17.5), Y(50), 4, 0, TAU); g.strokeStyle = C.warn; g.lineWidth = 1.5; g.stroke();
+  txt(g, 'Projected 50 around 16 Dec', X(17.5) - 12, Y(50) - 16, C.t2, 12, 'right', SANS);
+  txt(g, '72', pl[12][0] + 10, pl[12][1] - 10, C.text, 12, 'left'); txt(g, '96', pr[12][0] + 10, pr[12][1] - 10, C.t2, 12, 'left');
+  setCursor(null);
+}
+
+function rReport(){
+  polar('rpP', {zoom:100 / 7, paper:true, cloud:CL, cloudN:1100, center:DRIFT_L, r99:0.014, ring:0.055});
+  const {g, w, h} = cv('rpT');
+  txt(g, 'Rest trace, left stick, 10 s', 0, 8, '#7A5C5C', 10, 'left', SANS);
+  [[0, h * 0.36, 'X +3.3%'], [1, h * 0.76, 'Y +2.5%']].forEach(([ax, base, lab]) => { const pts = []; for (let i = 0; i < 125; i++){ const s = CL[i * 8 + 3]; pts.push([i * 2, base - (s[ax] - DRIFT_L[ax]) * 1100]); }
+    line(g, pts, C.ink, 1.1); txt(g, lab, w, base - 30, '#7A5C5C', 9.5, 'right'); });
+  const s = cv('rpH'), X = i => 40 + i / 12 * (s.w - 70), Y = v => s.h - 8 - (v - 60) / 40 * (s.h - 16);
+  txt(s.g, 'Trend', 0, s.h / 2, '#7A5C5C', 10, 'left', SANS);
+  line(s.g, HR.map((v, i) => [X(i), Y(v)]), 'rgba(29,33,39,.35)', 1.2); line(s.g, HL.map((v, i) => [X(i), Y(v)]), C.ink, 1.6);
+  txt(s.g, '72', X(12) + 8, Y(72), C.ink, 10, 'left');
+  setCursor(null);
+}
+
+const R = {monitor:rMonitor, rest:rRest, gate:rGate, correction:rCorrection, history:rHistory, report:rReport};
+window.renderAt = function(t){ lastT = t; R[current](t); };
+window.CAPTURE = {width:1440, height:900, scale:1.25,
+  shots:[{name:'screenshot-monitor', scene:'monitor', t:2.2}, {name:'screenshot-rest-test', scene:'rest', t:5.9},
+         {name:'screenshot-correction', scene:'correction', t:2.6}, {name:'screenshot-history', scene:'history', t:1},
+         {name:'screenshot-report', scene:'report', t:1}],
+  gifs:[{name:'demo-monitor', scene:'monitor', seconds:5, fps:20, width:960, colors:128},
+        {name:'demo-rest-test', scene:'rest', seconds:6, fps:20, width:960, colors:128},
+        {name:'demo-gate', scene:'gate', seconds:5, fps:20, width:960, colors:128},
+        {name:'demo-correction', scene:'correction', seconds:5, fps:20, width:960, colors:128}]};
+setScene('monitor');
+if (!window.__CAPTURE){
+  const loop = () => { window.renderAt(performance.now() / 1000); requestAnimationFrame(loop); }; requestAnimationFrame(loop);
+  addEventListener('keydown', e => { const i = parseInt(e.key, 10) - 1; if (i >= 0 && i < SCENES.length) setScene(SCENES[i][0]); });
+}
+})();
+</script>
+</body>
+</html>

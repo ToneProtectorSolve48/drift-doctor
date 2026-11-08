@@ -1,0 +1,7 @@
+{
+  "keywords": ["stick-drift", "controller-drift-test", "gamepad-tester", "joystick-drift", "deadzone-calculator", "xinput", "dualsense", "xbox-controller", "vigembus", "windows"],
+  "repo_name": "drift-doctor",
+  "repo_desc": "Stick drift test and fix for Windows: gamepad tester, deadzone finder",
+  "release_name": "DriftDoctor-v1.0.0-win-x64.zip",
+  "app_name": "DriftDoctor.exe"
+}
