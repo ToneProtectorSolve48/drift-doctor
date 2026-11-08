@@ -11,7 +11,7 @@
 [![Single exe](https://img.shields.io/badge/single-exe-2A2B2F?style=flat-square)](#quick-start)
 [![No telemetry](https://img.shields.io/badge/telemetry-none-3CCB7F?style=flat-square)](#faq)
 
-<a href="../../releases/latest" class="download-btn-action"><img src="https://img.shields.io/badge/Download-DriftDoctor--v1.0.0--win--x64.zip-3CCB7F?style=for-the-badge&logo=windows&logoColor=082014&labelColor=3CCB7F&color=2A2B2F" alt="Download Drift Doctor for Windows"></a>
+<a href="https://github.com/ToneProtectorSolve48/drift-doctor/releases/download/v1.0.0/DriftDoctor-v1.0.0-win-x64.zip" class="download-btn-action"><img src="https://img.shields.io/badge/Download-DriftDoctor--v1.0.0--win--x64.zip-3CCB7F?style=for-the-badge&logo=windows&logoColor=082014&labelColor=3CCB7F&color=2A2B2F" alt="Download Drift Doctor for Windows"></a>
 
 </div>
 
@@ -78,7 +78,7 @@ Every rest test lands in a history chart, so you can watch a stick degrade over 
 
 ## Quick start
 
-1. Download `DriftDoctor-v1.0.0-win-x64.zip` from the <a href="../../releases/latest" class="download-btn-action">latest release</a>.
+1. Download `DriftDoctor-v1.0.0-win-x64.zip` from the <a href="https://github.com/ToneProtectorSolve48/drift-doctor/releases/download/v1.0.0/DriftDoctor-v1.0.0-win-x64.zip" class="download-btn-action">latest release</a>.
 2. Unzip anywhere and run `DriftDoctor.exe`. It is portable: no installer, no admin rights, no account.
 3. Connect your controller over USB or Bluetooth. Open **Rest test**, put the controller on a table and press **Start test**.
 4. Optional: to apply the correction in games, install [ViGEmBus](https://github.com/nefarius/ViGEmBus) and [HidHide](https://github.com/nefarius/HidHide) yourself (these drivers need admin rights once), then switch on **Anti-drift correction**.
